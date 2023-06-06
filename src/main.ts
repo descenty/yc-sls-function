@@ -3,7 +3,7 @@ import * as github from '@actions/github';
 import archiver from 'archiver';
 import * as streamBuffers from 'stream-buffers';
 import {minimatch} from 'minimatch';
-import {glob} from 'glob';
+import {glob, globSync} from 'glob';
 
 import {decodeMessage, serviceClients, Session, waitForOperation} from '@yandex-cloud/nodejs-sdk';
 import {KB, parseMemory} from './memory';
@@ -259,7 +259,8 @@ export async function zipSources(inputs: ZipInputs, archive: archiver.Archiver):
     const root = path.join(workspace, inputs.sourceRoot);
     for (const include of inputs.include) {
       const pathFromSourceRoot = path.join(root, include);
-      const matches = glob.sync(pathFromSourceRoot, {absolute: false});
+      // replace windows backslash with forward slash
+      const matches = glob.sync(pathFromSourceRoot.replace(/\\/g, '/'), {absolute: false});
       for (const match of matches) {
         if (fs.lstatSync(match).isDirectory()) {
           archive.directory(pathFromSourceRoot, include, data => {
