@@ -263,6 +263,7 @@ export async function zipSources(inputs: ZipInputs, archive: archiver.Archiver):
       const matches = glob.sync(pathFromSourceRoot.replace(/\\/g, '/'), {absolute: false});
       for (const match of matches) {
         if (fs.lstatSync(match).isDirectory()) {
+          core.info(`add directory: ${match}`);
           archive.directory(pathFromSourceRoot, include, data => {
             const res = !patterns.map(p => minimatch(data.name, p)).some(x => x);
             return res ? data : false;
