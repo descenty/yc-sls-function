@@ -258,12 +258,13 @@ export async function zipSources(inputs: ZipInputs, archive: archiver.Archiver):
     const patterns = parseIgnoreGlobPatterns(inputs.excludePattern);
     const root = path.join(workspace, inputs.sourceRoot);
     for (const include of inputs.include) {
+      core.info(include);
       const pathFromSourceRoot = path.join(root, include);
       // replace windows backslash with forward slash
       const matches = glob.sync(pathFromSourceRoot.replace(/\\/g, '/'), {absolute: false});
+      core.info(matches.join('\n'));
       for (const match of matches) {
         if (fs.lstatSync(match).isDirectory()) {
-          core.info(`add directory: ${match}`);
           archive.directory(pathFromSourceRoot, include, data => {
             const res = !patterns.map(p => minimatch(data.name, p)).some(x => x);
             return res ? data : false;
