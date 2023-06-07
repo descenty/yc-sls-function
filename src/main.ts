@@ -269,7 +269,9 @@ export async function zipSources(inputs: ZipInputs, archive: archiver.Archiver):
       for (const match of matches) {
         if (fs.lstatSync(match).isDirectory()) {
           archive.directory(pathFromSourceRoot, include, data => {
+            core.info(`add directory ${data.name}`);
             const res = !patterns.map(p => minimatch(data.name, p)).some(x => x);
+            core.info(res.toString());
             return res ? data : false;
           });
         } else {
