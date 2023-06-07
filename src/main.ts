@@ -265,15 +265,8 @@ export async function zipSources(inputs: ZipInputs, archive: archiver.Archiver):
       const pathFromSourceRoot = path.join(root, include);
       // replace windows backslash with forward slash
       const matches = glob.sync(pathFromSourceRoot.replace(/\\/g, '/'), {absolute: false});
-      core.info(matches.join('\n'));
       for (const match of matches) {
-        archive.directory(pathFromSourceRoot, include, data => {
-          core.info(`add directory ${data.name}`);
-          const res = !patterns.map(p => minimatch(data.name, p)).some(x => x);
-          core.info(res.toString());
-          return res ? data : false;
-        });
-        break;
+        core.info(match);
         if (fs.lstatSync(match).isDirectory()) {
           archive.directory(pathFromSourceRoot, include, data => {
             core.info(`add directory ${data.name}`);
